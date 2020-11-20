@@ -12,6 +12,34 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController weightController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+
+  String _info = "Enter your data!";
+
+  void _resetFields(){
+    weightController.text = "";
+    heightController.text = "";
+
+    setState(() {
+      _info = "Enter your data!";
+    });
+  }
+
+  void calc() {
+    setState(() {
+      double weight = double.parse(weightController.text);
+      double height = double.parse(heightController.text) / 100;
+      double bmi = weight / (height * height);
+
+      if(bmi < 18.6) {
+        _info = "Under weight (${bmi.toStringAsPrecision(2)})";
+      } else {
+        _info = "Not under weight (${bmi.toStringAsPrecision(3)})";
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +50,7 @@ class _HomeState extends State<Home> {
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.refresh),
-              onPressed: () {}
+              onPressed: _resetFields
           )
         ],
       ),
@@ -48,7 +76,8 @@ class _HomeState extends State<Home> {
                 style: TextStyle(
                     color: Colors.green,
                     fontSize: 25
-                )
+                ),
+              controller: weightController,
             ),
             TextField(
                 keyboardType: TextInputType.number,
@@ -62,7 +91,8 @@ class _HomeState extends State<Home> {
                 style: TextStyle(
                     color: Colors.green,
                     fontSize: 25
-                )
+                ),
+              controller: heightController,
             ),
             Padding(
                 padding: EdgeInsets.only(
@@ -72,7 +102,7 @@ class _HomeState extends State<Home> {
                 child: Container(
                   height: 50,
                   child: RaisedButton(
-                    onPressed: () {},
+                    onPressed: calc,
                     child: Text("Calc",
                         style: TextStyle(
                             color: Colors.white,
@@ -83,7 +113,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
             ),
-            Text("data",
+            Text(_info,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.green,
