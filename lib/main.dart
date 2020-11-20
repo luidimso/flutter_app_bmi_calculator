@@ -15,6 +15,8 @@ class _HomeState extends State<Home> {
   TextEditingController weightController = TextEditingController();
   TextEditingController heightController = TextEditingController();
 
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   String _info = "Enter your data!";
 
   void _resetFields(){
@@ -23,6 +25,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       _info = "Enter your data!";
+      _formKey = GlobalKey<FormState>();
     });
   }
 
@@ -57,14 +60,16 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Icon(Icons.person_outline,
-                size: 120,
-                color: Colors.green
-            ),
-            TextField(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Icon(Icons.person_outline,
+                  size: 120,
+                  color: Colors.green
+              ),
+              TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     labelText: "Weight",
@@ -77,9 +82,14 @@ class _HomeState extends State<Home> {
                     color: Colors.green,
                     fontSize: 25
                 ),
-              controller: weightController,
-            ),
-            TextField(
+                controller: weightController,
+                validator: (value) {
+                  if(value.isEmpty) {
+                    return "Enter your weight!";
+                  }
+                },
+              ),
+              TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                     labelText: "Height",
@@ -92,17 +102,26 @@ class _HomeState extends State<Home> {
                     color: Colors.green,
                     fontSize: 25
                 ),
-              controller: heightController,
-            ),
-            Padding(
+                controller: heightController,
+                validator: (value) {
+                  if(value.isEmpty) {
+                    return "Enter your height!";
+                  }
+                }
+              ),
+              Padding(
                 padding: EdgeInsets.only(
-                  top: 10,
-                  bottom: 10
+                    top: 10,
+                    bottom: 10
                 ),
                 child: Container(
                   height: 50,
                   child: RaisedButton(
-                    onPressed: calc,
+                    onPressed: () {
+                      if(_formKey.currentState.validate()) {
+                        calc();
+                      }
+                    },
                     child: Text("Calc",
                         style: TextStyle(
                             color: Colors.white,
@@ -112,15 +131,16 @@ class _HomeState extends State<Home> {
                     color: Colors.green,
                   ),
                 ),
-            ),
-            Text(_info,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 25
-                )
-            )
-          ],
+              ),
+              Text(_info,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 25
+                  )
+              )
+            ],
+          ),
         ),
       )
     );
